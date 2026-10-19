@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sentiment Analysis</title>
+    <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+    body {
+        background-color: #0b0f23;
+        color: #e0e0e0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .container {
+        background: linear-gradient(145deg, #13183f, #1f275e);
+        padding: 40px 50px;
+        border-radius: 20px;
+        box-shadow: 0 0 20px #000000aa;
+        max-width: 800px;
+        width: 100%;
+        text-align: center;
+    }
+    h1 { font-size: 2.5rem; color: #4da6ff; margin-bottom: 25px; text-shadow: 1px 1px 5px #000; }
+
+    form textarea {
+        width: 100%;
+        padding: 18px;
+        border-radius: 12px;
+        border: 1px solid #3a4a70;
+        background-color: #0f1433;
+        color: #e0e0e0;
+        font-size: 1rem;
+        resize: none;
+        margin-bottom: 20px;
+    }
+    form textarea:focus {
+        outline: none;
+        border-color: #4da6ff;
+        box-shadow: 0 0 10px #4da6ff55;
+    }
+    form input[type="submit"] {
+        background-color: #4da6ff;
+        color: #0b0f23;
+        padding: 14px 35px;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    form input[type="submit"]:hover { background-color: #3399ff; transform: translateY(-2px); }
+
+    /* Info Cards */
+    .info-cards {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+    .info-card {
+        background-color: #13183f;
+        padding: 12px 18px;
+        border-radius: 12px;
+        width: 30%;
+        font-weight: 600;
+        color: #cce0ff;
+        box-shadow: 0 0 10px #00000066;
+        transition: all 0.3s ease;
+    }
+    .info-card:hover { box-shadow: 0 0 15px #4da6ff77; transform: scale(1.05); }
+
+    /* Predictions */
+    .predictions { margin-top: 25px; text-align: left; }
+    .predictions h2 { color: #4da6ff; margin-bottom: 15px; }
+    .predictions li {
+        list-style: none;
+        padding: 12px 18px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: #fff;
+    }
+    .predictions .Positive { background-color: #00cc99; }
+    .predictions .Negative { background-color: #ff4d4d; }
+
+    /* Final Prediction */
+    .final-prediction {
+        margin-top: 25px;
+        font-size: 1.6rem;
+        font-weight: 700;
+        padding: 12px 20px;
+        border-radius: 12px;
+        display: inline-block;
+        text-shadow: 1px 1px 5px #000;
+    }
+    .final-prediction.Positive { background-color: #00cc99; color: #fff; }
+    .final-prediction.Negative { background-color: #ff4d4d; color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sentiment Analysis</h1>
+        <form method="POST">
+            <textarea name="text" rows="4" cols="60" placeholder="Type your tweet here">{{ request.form['text'] if request.form.get('text') else '' }}</textarea>
+            <br>
+            <input type="submit" value="Analyze">
+        </form>
+
+        {% if predictions %}
+            <div class="info-cards">
+                <div class="info-card">Words: {{ word_count }}</div>
+                <div class="info-card">Hashtags: {{ hashtag_count }}</div>
+                <div class="info-card">Emojis: {{ emoji_count }}</div>
+            </div>
+
+            <div class="predictions">
+                <h2>Model Predictions:</h2>
+                <ul>
+                    <li class="{{ predictions['BernoulliNB'] }}">BernoulliNB: {{ predictions['BernoulliNB'] }}</li>
+                    <li class="{{ predictions['SVM'] }}">SVM: {{ predictions['SVM'] }}</li>
+                    <li class="{{ predictions['LogisticRegression'] }}">Logistic Regression: {{ predictions['LogisticRegression'] }}</li>
+                </ul>
+            </div>
+        {% endif %}
+
+        {% if final_prediction %}
+            <div class="final-prediction {{ final_prediction }}">{{ final_prediction }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
